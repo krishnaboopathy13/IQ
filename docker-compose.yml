@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  iq-enterprise:
+    build: .
+    container_name: iq-enterprise
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    # Uncomment to mount a custom nginx config at runtime
+    # volumes:
+    #   - ./nginx.docker.conf:/etc/nginx/conf.d/iq.conf:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "com.iq.service=enterprise-platform"
+      - "com.iq.version=2.0"
+
+# Optional: add a Traefik/Caddy reverse proxy for HTTPS
+# networks:
+#   default:
+#     external:
+#       name: traefik-network
